@@ -49,15 +49,6 @@
         Create an account
       </NuxtLink>
     </div>
-
-    <!-- <template #footer>
-      <div class="text-center text-sm text-gray-600">
-        Don't have an account?
-        <NuxtLink to="/register" class="text-primary-500 hover:underline">
-          Sign up
-        </NuxtLink>
-      </div>
-    </template> -->
   </div>
 </template>
 
@@ -88,7 +79,7 @@ async function handleLogin() {
 
 // Redirect if already logged in
 definePageMeta({
-  middleware: ['auth'],
+  // middleware: ['auth'],
   layout: 'auth',
   // auth: {
   //   unauthenticatedOnly: true,

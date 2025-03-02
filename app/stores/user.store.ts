@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import { userService } from '~/services/user.service'
 import type { User } from '~/types/user'
+import type { KeyMap } from '~/types/utils'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     currentUser: null as User | null,
     loading: false,
-    error: null as string | null
+    error: null as string | null,
+    users: {} as KeyMap<User>
   }),
 
   actions: {
@@ -27,8 +29,21 @@ export const useUserStore = defineStore('user', {
     async fetchCurrentUser() {
       try {
         this.loading = true
-        const response = await userService.getCurrentUser()
+        const response = await userService.getUser(this.currentUser.user_id)
         this.currentUser = response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch user'
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchUser(id: string) {
+      try {
+        this.loading = true
+        const response = await userService.getUser(id)
+        this.users.value[id] = response.data
       } catch (error) {
         this.error = error.message || 'Failed to fetch user'
         throw error
@@ -54,7 +69,7 @@ export const useUserStore = defineStore('user', {
       try {
         await userService.followUser(userId)
         if (this.currentUser) {
-          this.currentUser.followingCount++
+          this.currentUser.following++
         }
       } catch (error) {
         this.error = error.message || 'Follow failed'

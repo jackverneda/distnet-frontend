@@ -18,6 +18,15 @@
         />
       </UFormGroup>
 
+      <UFormGroup label="Name" name="name" required>
+        <UInput
+          v-model="form.name"
+          class="w-full"
+          placeholder="John Doe"
+          icon="i-heroicons-user"
+        />
+      </UFormGroup>
+
       <UFormGroup label="Email" name="email" required>
         <UInput
           v-model="form.email"
@@ -75,7 +84,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -103,6 +112,7 @@ async function handleRegister() {
       username: form.username,
       email: form.email,
       password: form.password,
+      name: form.name,
     })
     router.push('/')
   } catch (err) {
@@ -113,7 +123,7 @@ async function handleRegister() {
 }
 
 definePageMeta({
-  middleware: ['auth'],
+  // middleware: ['auth'],
   layout: 'auth',
   // auth: {
   //   unauthenticatedOnly: true,

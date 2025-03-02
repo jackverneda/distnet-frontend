@@ -1,22 +1,26 @@
 import { defineStore } from 'pinia'
+import { feedService } from '~/services/feed.service'
 import { postService } from '~/services/post.service'
 import type { Post } from '~/types/post'
+import type { KeyMap } from '~/types/utils'
 
 export const usePostStore = defineStore('post', {
   state: () => ({
-    posts: [] as Post[],
+    posts: [] as {} as KeyMap<Post>,
     loading: false,
     error: null as string | null,
     currentPage: 1,
-    hasMore: true
+    hasMore: true,
+    feed: [] as Post[]
   }),
 
   actions: {
-    async createPost(content: string, media?: File[]) {
+    async createPost(content: string) {
       try {
         this.loading = true
-        const newPost = await postService.createPost(content, media)
-        this.posts.unshift(newPost.data)
+        const newPost = await postService.createPost(content)
+        this.posts.value[newPost.data.post_id] = newPost.data
+        this.feed.unshift(newPost.data)
       } catch (error) {
         this.error = error.message || 'Failed to create post'
         throw error
@@ -37,7 +41,7 @@ export const usePostStore = defineStore('post', {
           return
         }
 
-        this.posts = [...this.posts, ...newPosts.data]
+        // this.posts = [...this.posts, ...newPosts.data]
         this.currentPage++
       } catch (error) {
         this.error = error.message || 'Failed to fetch posts'
@@ -47,30 +51,49 @@ export const usePostStore = defineStore('post', {
       }
     },
 
-    async toggleLike(post: Post) {
+    async fetchFeed() {
       try {
-        if (post.isLiked) {
-          await postService.unlikePost(post.id)
-          post.likesCount--
-        } else {
-          await postService.likePost(post.id)
-          post.likesCount++
+        this.loading = true
+        const feed = await feedService.getFeed(this.currentPage)
+
+        if (feed.data.length === 0) {
+          this.hasMore = false
+          return
         }
-        post.isLiked = !post.isLiked
+
+        this.feed = [...this.feed, ...feed.data]
+        this.currentPage++
       } catch (error) {
-        this.error = error.message || 'Failed to toggle like'
+        this.error = error.message || 'Failed to fetch feed'
         throw error
       }
+
     },
 
-    async deletePost(postId: string) {
-      try {
-        await postService.deletePost(postId)
-        this.posts = this.posts.filter(post => post.id !== postId)
-      } catch (error) {
-        this.error = error.message || 'Failed to delete post'
-        throw error
-      }
-    }
+    // async toggleLike(post: Post) {
+    //   try {
+    //     if (post.isLiked) {
+    //       await postService.unlikePost(post.id)
+    //       post.likesCount--
+    //     } else {
+    //       await postService.likePost(post.id)
+    //       post.likesCount++
+    //     }
+    //     post.isLiked = !post.isLiked
+    //   } catch (error) {
+    //     this.error = error.message || 'Failed to toggle like'
+    //     throw error
+    //   }
+    // },
+
+    // async deletePost(postId: string) {
+    //   try {
+    //     await postService.deletePost(postId)
+    //     this.posts = this.posts.filter(post => post.id !== postId)
+    //   } catch (error) {
+    //     this.error = error.message || 'Failed to delete post'
+    //     throw error
+    //   }
+    // }
   }
 })

@@ -1,13 +1,19 @@
+import { API_BASE_URL, API_ENDPOINTS } from '~/config/config'
 import { api } from './api.service'
 import type { IResponse } from '~/interfaces/IResponse'
 import type { Post } from '~/types/post'
 
-async function createPost(content: string, media?: File[]): Promise<IResponse<Post>> {
+async function createPost(content: string): Promise<IResponse<Post>> {
+  const currentUser = useUserStore().currentUser
+  if (!currentUser) {
+    console.log("No hay usuario")
+    throw new Error('User not logged in')
+  }
+  console.log('currentUser', currentUser)
   const formData = new FormData()
   formData.append('content', content)
-  media?.forEach(file => formData.append('media', file))
-
-  return api.post('posts', formData)
+  formData.append('user_id', currentUser.user_id)
+  return api.post(`${API_BASE_URL}${API_ENDPOINTS.POST}`, formData)
 }
 
 async function getPosts(page = 1, limit = 10): Promise<IResponse<Post[]>> {

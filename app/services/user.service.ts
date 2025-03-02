@@ -13,11 +13,11 @@ async function register(userData: {
   password: string
   name: string
 }): Promise<IResponse<AuthResponse>> {
-  return api.post(API_BASE_URL + API_ENDPOINTS.USER, userData)
+  return api.post(API_BASE_URL + API_ENDPOINTS.REGISTER, userData)
 }
 
-async function getCurrentUser(): Promise<IResponse<User>> {
-  return api.get('http://localhost:81/users/me')
+async function getUser(id: string): Promise<IResponse<User>> {
+  return api.get(`${API_BASE_URL}${API_ENDPOINTS.USER}/${id}`)
 }
 
 async function updateUser(userData: Partial<User>): Promise<IResponse<User>> {
@@ -35,7 +35,7 @@ async function unfollowUser(userId: string): Promise<IResponse<void>> {
 export const userService = {
   login,
   register,
-  getCurrentUser,
+  getUser,
   updateUser,
   followUser,
   unfollowUser

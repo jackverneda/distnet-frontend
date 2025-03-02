@@ -1,12 +1,12 @@
 export interface User {
-  id: string
+  user_id: string
   username: string
   email: string
   name: string
   avatar?: string
   bio?: string
-  followersCount: number
-  followingCount: number
+  followers: number
+  following: number
   createdAt: Date
 }
 

@@ -10,6 +10,10 @@
 </template>
 
 <script setup>
+const route = useRoute()
+const username = route.params.username
+
+
 const currentUser = ref({
   name: 'John Doe',
   handle: 'johndoe',

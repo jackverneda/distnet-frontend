@@ -1,14 +1,16 @@
 import type { User } from '.'
 
 export interface Post {
-  id: string
+  post_id: string
   content: string
+  user_id: string
   author: User
-  likesCount: number
-  retweetsCount: number
-  repliesCount: number
   createdAt: Date
-  media?: string[]
-  isLiked?: boolean
-  isRetweeted?: boolean
+}
+
+export interface PostEnvelope {
+  post: Post
+  isRepost: boolean
+  user_id: string
+  author: User
 }

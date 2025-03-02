@@ -26,12 +26,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Profile'
-}
-</script>
-
 <script setup>
 const props = defineProps({
   user: {

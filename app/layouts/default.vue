@@ -8,10 +8,6 @@ const links = [[
     icon: 'i-lucide-house',
     to: '/'
   }, {
-    label: 'Home',
-    icon: 'i-lucide-house',
-    to: '/home'
-  }, {
     label: 'Inbox',
     icon: 'i-lucide-inbox',
     to: '/inbox',
@@ -32,9 +28,6 @@ const links = [[
     }, {
       label: 'Members',
       to: '/settings/members'
-    }, {
-      label: 'Notifications',
-      to: '/settings/notifications'
     }, {
       label: 'Security',
       to: '/settings/security'

@@ -112,9 +112,3 @@ function toggleFollow() {
   emit(isFollowing.value ? 'follow' : 'unfollow')
 }
 </script>
-
-<script>
-export default {
-  name: 'ProfileHeader'
-}
-</script>

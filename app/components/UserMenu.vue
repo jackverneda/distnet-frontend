@@ -126,21 +126,6 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     type: 'checkbox'
   }]
 }], [{
-  label: 'Documentation',
-  icon: 'i-lucide-book-open',
-  to: 'https://ui3.nuxt.dev/getting-started/installation/pro/nuxt',
-  target: '_blank'
-}, {
-  label: 'GitHub repository',
-  icon: 'i-simple-icons-github',
-  to: 'https://github.com/nuxt-ui-pro/dashboard/tree/v3',
-  target: '_blank'
-}, {
-  label: 'Upgrade to Pro',
-  icon: 'i-lucide-rocket',
-  to: 'https://ui.nuxt.com/pro/purchase',
-  target: '_blank'
-}], [{
   label: 'Log out',
   icon: 'i-lucide-log-out'
 }]]))
