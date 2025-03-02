@@ -8,13 +8,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint .",
+    "lint": "eslint --ext .js,.vue src",
+    "lint:fix": "eslint --fix --ext .js,.vue app",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.26",
     "@iconify-json/simple-icons": "^1.2.24",
     "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@17d88f7",
+    "@pinia/nuxt": "^0.10.1",
     "@unovis/ts": "^1.5.0",
     "@unovis/vue": "^1.5.0",
     "@vueuse/nuxt": "^12.7.0",
@@ -24,7 +26,11 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.0.1",
-    "eslint": "^9.20.1",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-vue": "^9.32.0",
+    "prettier": "^3.5.2",
     "typescript": "^5.7.3",
     "vue-tsc": "^2.2.0"
   },

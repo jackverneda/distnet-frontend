@@ -2,39 +2,44 @@
 const route = useRoute()
 const toast = useToast()
 
-const links = [[{
-  label: 'Home',
-  icon: 'i-lucide-house',
-  to: '/'
-}, {
-  label: 'Inbox',
-  icon: 'i-lucide-inbox',
-  to: '/inbox',
-  badge: '4'
-}, {
-  label: 'Customers',
-  icon: 'i-lucide-users',
-  to: '/customers'
-}, {
-  label: 'Settings',
-  to: '/settings',
-  icon: 'i-lucide-settings',
-  defaultOpen: true,
-  children: [{
-    label: 'General',
+const links = [[
+  {
+    label: 'Feed',
+    icon: 'i-lucide-house',
+    to: '/'
+  }, {
+    label: 'Home',
+    icon: 'i-lucide-house',
+    to: '/home'
+  }, {
+    label: 'Inbox',
+    icon: 'i-lucide-inbox',
+    to: '/inbox',
+    badge: '4'
+  }, {
+    label: 'Customers',
+    icon: 'i-lucide-users',
+    to: '/customers'
+  }, {
+    label: 'Settings',
     to: '/settings',
-    exact: true
-  }, {
-    label: 'Members',
-    to: '/settings/members'
-  }, {
-    label: 'Notifications',
-    to: '/settings/notifications'
-  }, {
-    label: 'Security',
-    to: '/settings/security'
-  }]
-}], [{
+    icon: 'i-lucide-settings',
+    defaultOpen: true,
+    children: [{
+      label: 'General',
+      to: '/settings',
+      exact: true
+    }, {
+      label: 'Members',
+      to: '/settings/members'
+    }, {
+      label: 'Notifications',
+      to: '/settings/notifications'
+    }, {
+      label: 'Security',
+      to: '/settings/security'
+    }]
+  }], [{
   label: 'Feedback',
   icon: 'i-lucide-message-circle',
   to: 'https://github.com/nuxt-ui-pro/dashboard',

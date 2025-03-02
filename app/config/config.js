@@ -1,0 +1,10 @@
+export const API_BASE_URL = useRuntimeConfig().public.apiBase
+
+export const API_ENDPOINTS = {
+  USER: '/users',
+  POST: '/messages',
+  FOLLOW: '/follow',
+  REPOST: '/repost',
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register'
+}

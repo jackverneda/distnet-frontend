@@ -1,0 +1,8 @@
+// filepath: /Users/jack/Library/Application Support/Code/User/settings.json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "vue"]
+}
