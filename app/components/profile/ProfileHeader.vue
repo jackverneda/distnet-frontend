@@ -19,9 +19,7 @@
           <h1 class="text-xl font-bold">
             {{ user.name }}
           </h1>
-          <p class="text-gray-600">
-            @{{ user.handle }}
-          </p>
+          <p class="text-gray-600">@{{ user.username }}</p>
         </div>
         <UButton
           v-if="!isCurrentUser"
@@ -29,12 +27,6 @@
           :color="isFollowing ? 'gray' : 'black'"
           variant="solid"
           @click="toggleFollow"
-        />
-        <UButton
-          v-else
-          label="Edit profile"
-          variant="outline"
-          color="gray"
         />
       </div>
 
@@ -68,7 +60,9 @@
       <template #item="{ item }">
         <div class="flex items-center gap-1 relative py-4">
           <span>{{ item.label }}</span>
-          <span v-if="item.count" class="text-gray-500 text-sm">{{ item.count }}</span>
+          <span v-if="item.count" class="text-gray-500 text-sm">{{
+            item.count
+          }}</span>
         </div>
       </template>
     </UTabs>
@@ -81,12 +75,16 @@ import { computed } from 'vue'
 const props = defineProps({
   user: {
     type: Object,
-    required: true
+    required: true,
+  },
+  posts: {
+    type: Array,
+    default: () => [],
   },
   isCurrentUser: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['follow', 'unfollow'])
@@ -94,17 +92,16 @@ const emit = defineEmits(['follow', 'unfollow'])
 const isFollowing = ref(false)
 
 const joinDate = computed(() => {
-  return new Date(props.user.joined).toLocaleDateString('en-US', {
+  return new Date(props.user.created_at).toLocaleDateString('en-US', {
     month: 'long',
-    year: 'numeric'
+    year: 'numeric',
   })
 })
 
 const tabs = [
-  { label: 'Posts', key: 'posts', count: props.user.tweets.length },
+  { label: 'Posts', key: 'posts', count: props.posts.length },
   { label: 'Replies', key: 'replies', count: 0 },
   { label: 'Media', key: 'media', count: 0 },
-  { label: 'Likes', key: 'likes', count: 0 }
 ]
 
 function toggleFollow() {

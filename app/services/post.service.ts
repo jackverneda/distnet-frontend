@@ -2,18 +2,23 @@ import { API_BASE_URL, API_ENDPOINTS } from '~/config/config'
 import { api } from './api.service'
 import type { IResponse } from '~/interfaces/IResponse'
 import type { Post } from '~/types/post'
+import type { User } from '~/types/user'
 
-async function createPost(content: string): Promise<IResponse<Post>> {
-  const currentUser = useUserStore().currentUser
+async function createPost(content: string, currentUser: User): Promise<IResponse<Post>> {
   if (!currentUser) {
     console.log("No hay usuario")
     throw new Error('User not logged in')
   }
   console.log('currentUser', currentUser)
-  const formData = new FormData()
-  formData.append('content', content)
-  formData.append('user_id', currentUser.user_id)
-  return api.post(`${API_BASE_URL}${API_ENDPOINTS.POST}`, formData)
+  const payload = {
+    content: content,
+    user_id: currentUser.user_id
+  }
+  return api.post(`${API_BASE_URL}${API_ENDPOINTS.POST}`, payload)
+}
+
+async function getPostsByUserId(user_id: string, page = 1, limit = 10): Promise<IResponse<Post[]>> {
+  return api.get(`${API_BASE_URL}${API_ENDPOINTS.POST}/user/${user_id}`, {})
 }
 
 async function getPosts(page = 1, limit = 10): Promise<IResponse<Post[]>> {
@@ -38,6 +43,7 @@ async function deletePost(postId: string): Promise<IResponse<void>> {
 
 export const postService = {
   createPost,
+  getPostsByUserId,
   getPosts,
   likePost,
   unlikePost,

@@ -1,14 +1,34 @@
 <script setup lang="ts">
+import { user } from '#build/ui-pro'
+import { feedService } from '~/services/feed.service'
+
 const postsStore = usePostStore()
 const userStore = useUserStore()
-const currentUser = computed(() => userStore.currentUser)  
+const currentUser = computed(() => userStore.currentUser)
+
+const feed = ref([])
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    await userStore.fetchCurrentUser()
+
+    const feedResponse = await feedService.getFeed(currentUser.value.user_id)
+    feed.value = feedResponse.data
+    console.log('Posts:', feed.value)
+  } catch (error) {
+    console.error('Error fetching profile data:', error)
+  } finally {
+    loading.value = false
+  }
+})
 
 const tweets = ref([
   {
     id: 2,
     user: {
       name: 'Alex Johnson',
-      handle: 'alexd',
+      username: 'alexd',
       avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
     },
     content:
@@ -18,13 +38,13 @@ const tweets = ref([
     replies: 7,
     liked: false,
     retweeted: false,
-    timestamp: new Date(Date.now() - 7200000), // 2 horas
+    created_at: new Date(Date.now() - 7200000), // 2 horas
   },
   {
     id: 3,
     user: {
       name: 'Sarah Lee',
-      handle: 'sarah_dev',
+      username: 'sarah_dev',
       avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
     },
     content:
@@ -34,13 +54,13 @@ const tweets = ref([
     replies: 12,
     liked: false,
     retweeted: false,
-    timestamp: new Date(Date.now() - 1800000), // 30 minutos
+    created_at: new Date(Date.now() - 1800000), // 30 minutos
   },
   {
     id: 4,
     user: {
       name: 'Mike Chen',
-      handle: 'mikechen',
+      username: 'mikechen',
       avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
     },
     content:
@@ -50,13 +70,13 @@ const tweets = ref([
     replies: 23,
     liked: false,
     retweeted: false,
-    timestamp: new Date(Date.now() - 86400000), // 24 horas
+    created_at: new Date(Date.now() - 86400000), // 24 horas
   },
   {
     id: 5,
     user: {
       name: 'Emma Wilson',
-      handle: 'emma_w',
+      username: 'emma_w',
       avatar: 'https://randomuser.me/api/portraits/women/5.jpg',
     },
     content:
@@ -66,13 +86,13 @@ const tweets = ref([
     replies: 9,
     liked: false,
     retweeted: false,
-    timestamp: new Date(Date.now() - 5400000), // 1.5 horas
+    created_at: new Date(Date.now() - 5400000), // 1.5 horas
   },
   {
     id: 6,
     user: {
       name: 'John Doe',
-      handle: 'johndoe',
+      username: 'johndoe',
       avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
     },
     content:
@@ -82,7 +102,7 @@ const tweets = ref([
     replies: 2,
     liked: false,
     retweeted: false,
-    timestamp: new Date(Date.now() - 900000), // 15 minutos
+    created_at: new Date(Date.now() - 900000), // 15 minutos
   },
 ])
 
@@ -109,7 +129,7 @@ function toggleRetweet(tweet) {
       <div class="flex gap-3">
         <UAvatar
           size="md"
-          :src="currentUser? currentUser.avatar : ''"
+          :src="currentUser ? currentUser.avatar : ''"
           alt="Profile"
           class="flex-shrink-0"
         />
@@ -139,9 +159,13 @@ function toggleRetweet(tweet) {
       </div>
     </div>
 
+    <div class="mt-8" v-if="loading">
+      <PostSkeleton v-for="i in 3" :key="i" />
+    </div>
     <!-- Tweet Feed -->
     <Post
-      v-for="tweet in tweets"
+      v-else
+      v-for="tweet in feed"
       :key="tweet.id"
       :tweet="tweet"
       @retweet="toggleRetweet"

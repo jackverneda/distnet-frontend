@@ -13,11 +13,11 @@
         <div class="flex-1">
           <div class="flex items-center gap-2">
             <span class="font-semibold">{{ tweet.user.name }}</span>
-            <span class="text-gray-500">@{{ tweet.user.handle }}</span>
+            <span class="text-gray-500">@{{ tweet.user.username }}</span>
             <span class="text-gray-500">·</span>
-            <UTooltip :text="formatTime(tweet.timestamp)">
+            <UTooltip :text="formatTime(tweet.created_at)">
               <span class="text-gray-500 hover:underline">{{
-                timeAgo(tweet.timestamp)
+                timeAgo(tweet.created_at)
               }}</span>
             </UTooltip>
           </div>

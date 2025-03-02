@@ -5,11 +5,17 @@ import type { KeyMap } from '~/types/utils'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    currentUser: null as User | null,
+    currentUser: JSON.parse(localStorage.getItem('currentUser') as string) as User | null,
     loading: false,
     error: null as string | null,
-    users: {} as KeyMap<User>
+    users: {} as Record<string, User>,
   }),
+
+  getters: {
+    getUserById: (state) => (id: string) => state.users[id],
+    getUserByUsername: (state) => (username: string) => 
+      Object.values(state.users).find(user => user.username === username),
+  },
 
   actions: {
     async login(email: string, password: string) {
@@ -18,6 +24,7 @@ export const useUserStore = defineStore('user', {
         const response = await userService.login(email, password)
         this.currentUser = response.data.user
         useCookie('authToken').value = response.data.token
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
       } catch (error) {
         this.error = error.message || 'Login failed'
         throw error
@@ -29,8 +36,9 @@ export const useUserStore = defineStore('user', {
     async fetchCurrentUser() {
       try {
         this.loading = true
-        const response = await userService.getUser(this.currentUser.user_id)
+        const response = await userService.getUser(this.currentUser!.user_id)
         this.currentUser = response.data
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
       } catch (error) {
         this.error = error.message || 'Failed to fetch user'
         throw error
@@ -43,7 +51,7 @@ export const useUserStore = defineStore('user', {
       try {
         this.loading = true
         const response = await userService.getUser(id)
-        this.users.value[id] = response.data
+        this.users[id] = response.data
       } catch (error) {
         this.error = error.message || 'Failed to fetch user'
         throw error
@@ -57,6 +65,7 @@ export const useUserStore = defineStore('user', {
         this.loading = true
         const response = await userService.updateUser(userData)
         this.currentUser = response.data
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
       } catch (error) {
         this.error = error.message || 'Update failed'
         throw error
@@ -70,6 +79,7 @@ export const useUserStore = defineStore('user', {
         await userService.followUser(userId)
         if (this.currentUser) {
           this.currentUser.following++
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
         }
       } catch (error) {
         this.error = error.message || 'Follow failed'
@@ -94,6 +104,7 @@ export const useUserStore = defineStore('user', {
     logout() {
       this.currentUser = null
       useCookie('authToken').value = null
+      localStorage.removeItem('currentUser')
     }
   }
 })

@@ -2,6 +2,7 @@
   <div class="max-w-2xl mx-auto">
     <ProfileHeader
       :user="user"
+      :posts="posts"
       :is-current-user="isCurrentUser"
       @follow="handleFollow"
       @unfollow="handleUnfollow"
@@ -10,15 +11,14 @@
     <!-- Tweets -->
     <div v-if="activeTab === 'posts'" class="divide-y divide-gray-200">
       <Post
-        v-for="tweet in user.tweets"
-        :key="tweet.id"
-        :tweet="tweet"
-        @like="$emit('like', tweet)"
-        @retweet="$emit('retweet', tweet)"
+        v-for="post in posts"
+        :key="post.post_id"
+        :tweet="post"
+        @retweet="$emit('retweet', post)"
       />
 
-      <div v-if="user.tweets.length === 0" class="p-8 text-center text-gray-500">
-        No tweets yet
+      <div v-if="posts.length === 0" class="p-8 text-center text-gray-500">
+        No posts yet
       </div>
     </div>
 
@@ -30,12 +30,16 @@
 const props = defineProps({
   user: {
     type: Object,
-    required: true
+    required: true,
+  },
+  posts: {
+    type: Array,
+    default: () => [],
   },
   isCurrentUser: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['like', 'retweet', 'follow', 'unfollow'])

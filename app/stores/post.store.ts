@@ -6,7 +6,7 @@ import type { KeyMap } from '~/types/utils'
 
 export const usePostStore = defineStore('post', {
   state: () => ({
-    posts: [] as {} as KeyMap<Post>,
+    posts: {} as Record<string, Post>,
     loading: false,
     error: null as string | null,
     currentPage: 1,
@@ -14,16 +14,31 @@ export const usePostStore = defineStore('post', {
     feed: [] as Post[]
   }),
 
+  getters: {
+    getPostById: (state) => (id: string) => state.posts[id],
+    getPostsByUserId: (state) => (userId: string) => Object.values(state.posts).filter(post => post.user_id === userId)
+  },
+
   actions: {
     async createPost(content: string) {
+      const userStore = useUserStore()
+      const currentUser = userStore.currentUser
+
+      if (!currentUser) {
+        this.error = 'User not logged in'
+        throw new Error(this.error)
+      }
+
       try {
         this.loading = true
-        const newPost = await postService.createPost(content)
+        const newPost = await postService.createPost(content, currentUser)
         this.posts.value[newPost.data.post_id] = newPost.data
         this.feed.unshift(newPost.data)
+
       } catch (error) {
         this.error = error.message || 'Failed to create post'
         throw error
+
       } finally {
         this.loading = false
       }
@@ -50,11 +65,33 @@ export const usePostStore = defineStore('post', {
         this.loading = false
       }
     },
-
-    async fetchFeed() {
+    async fetchPostsByUserId(userId: string) {
       try {
         this.loading = true
-        const feed = await feedService.getFeed(this.currentPage)
+        const newPosts = await postService.getPostsByUserId(userId)
+        newPosts.data.forEach(post => {
+          this.posts[post.post_id] = post
+        })
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch posts'
+        throw error
+      }   finally {
+        this.loading = false
+      }
+    },
+
+    async fetchFeed() {
+      const userStore = useUserStore()
+      const currentUser = userStore.currentUser
+
+      if (!currentUser) {
+        this.error = 'User not logged in'
+        throw new Error(this.error)
+      }
+
+      try {
+        this.loading = true
+        const feed = await feedService.getFeed(currentUser)
 
         if (feed.data.length === 0) {
           this.hasMore = false

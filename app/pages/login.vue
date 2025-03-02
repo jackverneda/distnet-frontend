@@ -53,6 +53,10 @@
 </template>
 
 <script setup>
+import { useUserStore } from '~/stores/user.store'
+import { useRouter } from 'vue-router'
+import { reactive, ref } from 'vue'
+
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -77,10 +81,9 @@ async function handleLogin() {
   }
 }
 
-// Redirect if already logged in
 definePageMeta({
-  // middleware: ['auth'],
   layout: 'auth',
+  // middleware: ['auth'],
   // auth: {
   //   unauthenticatedOnly: true,
   //   navigateAuthenticatedTo: '/',
