@@ -33,149 +33,117 @@ const router = useRouter()
 const userStore = useUserStore()
 const user = computed(() => userStore.currentUser)
 
-const items = computed<DropdownMenuItem[][]>(() => [
-  [
-    {
-      type: 'label',
-      label: user.value.name,
-      avatar: { src: user.value.avatar, alt: user.value.name },
-    },
-  ],
-  [
-    {
-      label: 'Profile',
-      icon: 'i-lucide-user',
-      to: `/profile/${user.value.user_id}`,
-    },
-    {
-      label: 'Billing',
-      icon: 'i-lucide-credit-card',
-    },
-    {
-      label: 'Settings',
-      icon: 'i-lucide-settings',
-      to: '/settings',
-    },
-  ],
-  [
-    {
-      label: 'Theme',
-      icon: 'i-lucide-palette',
-      children: [
-        {
-          label: 'Primary',
-          slot: 'chip',
-          chip: appConfig.ui.colors.primary,
-          content: {
-            align: 'center',
-            collisionPadding: 16,
-          },
-          children: colors.map((color) => ({
-            label: color,
-            chip: color,
+const items = computed<DropdownMenuItem[][]>(() => {
+  // if (!user.value) return []
+  return [
+    [
+      {
+        type: 'label',
+        label: user.value?.name,
+        avatar: { src: user.value?.avatar, alt: user.value?.name },
+      },
+    ],
+    [
+      {
+        label: 'Profile',
+        icon: 'i-lucide-user',
+        to: `/profile/${user.value?.user_id}`,
+      },
+    ],
+    [
+      {
+        label: 'Theme',
+        icon: 'i-lucide-palette',
+        children: [
+          {
+            label: 'Primary',
             slot: 'chip',
-            checked: appConfig.ui.colors.primary === color,
+            chip: appConfig.ui.colors.primary,
+            content: {
+              align: 'center',
+              collisionPadding: 16,
+            },
+            children: colors.map((color) => ({
+              label: color,
+              chip: color,
+              slot: 'chip',
+              checked: appConfig.ui.colors.primary === color,
+              type: 'checkbox',
+              onSelect: (e) => {
+                e.preventDefault()
+
+                appConfig.ui.colors.primary = color
+              },
+            })),
+          },
+          {
+            label: 'Neutral',
+            slot: 'chip',
+            chip: appConfig.ui.colors.neutral,
+            content: {
+              align: 'end',
+              collisionPadding: 16,
+            },
+            children: neutrals.map((color) => ({
+              label: color,
+              chip: color,
+              slot: 'chip',
+              type: 'checkbox',
+              checked: appConfig.ui.colors.neutral === color,
+              onSelect: (e) => {
+                e.preventDefault()
+
+                appConfig.ui.colors.neutral = color
+              },
+            })),
+          },
+        ],
+      },
+      {
+        label: 'Appearance',
+        icon: 'i-lucide-sun-moon',
+        children: [
+          {
+            label: 'Light',
+            icon: 'i-lucide-sun',
             type: 'checkbox',
-            onSelect: (e) => {
+            checked: colorMode.value === 'light',
+            onSelect(e: Event) {
               e.preventDefault()
 
-              appConfig.ui.colors.primary = color
+              colorMode.preference = 'light'
             },
-          })),
-        },
-        {
-          label: 'Neutral',
-          slot: 'chip',
-          chip: appConfig.ui.colors.neutral,
-          content: {
-            align: 'end',
-            collisionPadding: 16,
           },
-          children: neutrals.map((color) => ({
-            label: color,
-            chip: color,
-            slot: 'chip',
+          {
+            label: 'Dark',
+            icon: 'i-lucide-moon',
             type: 'checkbox',
-            checked: appConfig.ui.colors.neutral === color,
-            onSelect: (e) => {
-              e.preventDefault()
-
-              appConfig.ui.colors.neutral = color
+            checked: colorMode.value === 'dark',
+            onUpdateChecked(checked: boolean) {
+              if (checked) {
+                colorMode.preference = 'dark'
+              }
             },
-          })),
-        },
-      ],
-    },
-    {
-      label: 'Appearance',
-      icon: 'i-lucide-sun-moon',
-      children: [
-        {
-          label: 'Light',
-          icon: 'i-lucide-sun',
-          type: 'checkbox',
-          checked: colorMode.value === 'light',
-          onSelect(e: Event) {
-            e.preventDefault()
+            onSelect(e: Event) {
+              e.preventDefault()
+            },
+          },
+        ],
+      },
+    ],
+    [
+      {
+        label: 'Log out',
+        icon: 'i-lucide-log-out',
+        onSelect: handleLogout,
+      },
+    ],
+  ]
+})
 
-            colorMode.preference = 'light'
-          },
-        },
-        {
-          label: 'Dark',
-          icon: 'i-lucide-moon',
-          type: 'checkbox',
-          checked: colorMode.value === 'dark',
-          onUpdateChecked(checked: boolean) {
-            if (checked) {
-              colorMode.preference = 'dark'
-            }
-          },
-          onSelect(e: Event) {
-            e.preventDefault()
-          },
-        },
-      ],
-    },
-  ],
-  [
-    {
-      label: 'Templates',
-      icon: 'i-lucide-layout-template',
-      children: [
-        {
-          label: 'Starter',
-          to: 'https://ui-pro-starter.nuxt.dev/',
-        },
-        {
-          label: 'Landing',
-          to: 'https://landing-template.nuxt.dev/',
-        },
-        {
-          label: 'Docs',
-          to: 'https://docs-template.nuxt.dev/',
-        },
-        {
-          label: 'SaaS',
-          to: 'https://saas-template.nuxt.dev/',
-        },
-        {
-          label: 'Dashboard',
-          to: 'https://dashboard-template.nuxt.dev/',
-          checked: true,
-          type: 'checkbox',
-        },
-      ],
-    },
-  ],
-  [
-    {
-      label: 'Log out',
-      icon: 'i-lucide-log-out',
-      onSelect: handleLogout,
-    },
-  ],
-])
+onMounted(() => {
+  userStore.initialize()
+})
 
 async function handleLogout() {
   await userStore.logout()
@@ -192,8 +160,8 @@ async function handleLogout() {
     }"
   >
     <UButton
-      :avatar="{ src: user.avatar, alt: user.name }"
-      :label="collapsed ? undefined : user.name"
+      :avatar="{ src: user?.avatar || null, alt: user?.name }"
+      :label="collapsed ? undefined : user?.name"
       :trailingIcon="collapsed ? undefined : 'i-lucide-chevrons-up-down'"
       color="neutral"
       variant="ghost"

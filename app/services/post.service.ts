@@ -21,6 +21,11 @@ async function getPostsByUserId(user_id: string, page = 1, limit = 10): Promise<
   return api.get(`${API_BASE_URL}${API_ENDPOINTS.POST}/user/${user_id}`, {})
 }
 
+async function searchPosts(query: string): Promise<Post[]> {
+  const response = await api.get(`${API_BASE_URL}${API_ENDPOINTS.POST}?query=${query}`)
+  return response.data
+}
+
 async function getPosts(page = 1, limit = 10): Promise<IResponse<Post[]>> {
   return api.get(`posts?page=${page}&limit=${limit}`)
 }
@@ -44,6 +49,7 @@ async function deletePost(postId: string): Promise<IResponse<void>> {
 export const postService = {
   createPost,
   getPostsByUserId,
+  searchPosts,
   getPosts,
   likePost,
   unlikePost,

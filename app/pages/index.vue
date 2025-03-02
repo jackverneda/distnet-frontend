@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { user } from '#build/ui-pro'
+import PostSK from '~/components/Post/PostSK.vue'
 import { feedService } from '~/services/feed.service'
 
 const postsStore = usePostStore()
@@ -10,6 +11,11 @@ const feed = ref([])
 const loading = ref(true)
 
 onMounted(async () => {
+  userStore.initialize()
+  refresh()
+})
+
+async function refresh() {
   try {
     await userStore.fetchCurrentUser()
 
@@ -21,90 +27,7 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
-
-const tweets = ref([
-  {
-    id: 2,
-    user: {
-      name: 'Alex Johnson',
-      username: 'alexd',
-      avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-    },
-    content:
-      'Just joined the @nuxt_js community! Any tips for a newbie? 👨💻 #webdev #vue',
-    likes: 28,
-    retweets: 5,
-    replies: 7,
-    liked: false,
-    retweeted: false,
-    created_at: new Date(Date.now() - 7200000), // 2 horas
-  },
-  {
-    id: 3,
-    user: {
-      name: 'Sarah Lee',
-      username: 'sarah_dev',
-      avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
-    },
-    content:
-      'Anyone else stuck in CSS grid hell today? 😅 \n\nPro tip: grid-template-areas are your friend!',
-    likes: 65,
-    retweets: 15,
-    replies: 12,
-    liked: false,
-    retweeted: false,
-    created_at: new Date(Date.now() - 1800000), // 30 minutos
-  },
-  {
-    id: 4,
-    user: {
-      name: 'Mike Chen',
-      username: 'mikechen',
-      avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
-    },
-    content:
-      'Debugging be like: "Why is this working now? I didn\'t change anything!" 🐛 #developerhumor',
-    likes: 142,
-    retweets: 42,
-    replies: 23,
-    liked: false,
-    retweeted: false,
-    created_at: new Date(Date.now() - 86400000), // 24 horas
-  },
-  {
-    id: 5,
-    user: {
-      name: 'Emma Wilson',
-      username: 'emma_w',
-      avatar: 'https://randomuser.me/api/portraits/women/5.jpg',
-    },
-    content:
-      'Just discovered the power of Vue composables! 🤯\n\nLife-changing for state management! #vuejs #frontend',
-    likes: 89,
-    retweets: 32,
-    replies: 9,
-    liked: false,
-    retweeted: false,
-    created_at: new Date(Date.now() - 5400000), // 1.5 horas
-  },
-  {
-    id: 6,
-    user: {
-      name: 'John Doe',
-      username: 'johndoe',
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-    },
-    content:
-      'Shoutout to my team for crushing the latest sprint! 🚀\n\nNext stop: production deployment! #agile #devops',
-    likes: 15,
-    retweets: 3,
-    replies: 2,
-    liked: false,
-    retweeted: false,
-    created_at: new Date(Date.now() - 900000), // 15 minutos
-  },
-])
+}
 
 const newTweet = ref('')
 
@@ -112,6 +35,7 @@ function postTweet() {
   console.log('Posting tweet:', newTweet.value)
   postsStore.createPost(newTweet.value.trim())
   newTweet.value = ''
+  refresh()
 }
 
 function toggleRetweet(tweet) {
@@ -148,7 +72,7 @@ function toggleRetweet(tweet) {
                 >{{ newTweet.length }}/280</span
               >
               <UButton
-                label="Tweet"
+                label="Post"
                 color="primary"
                 :disabled="newTweet.length === 0 || newTweet.length > 280"
                 @click="postTweet"
@@ -160,7 +84,7 @@ function toggleRetweet(tweet) {
     </div>
 
     <div class="mt-8" v-if="loading">
-      <PostSkeleton v-for="i in 3" :key="i" />
+      <PostSK v-for="i in 3" :key="i" />
     </div>
     <!-- Tweet Feed -->
     <Post

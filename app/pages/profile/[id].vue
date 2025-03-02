@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <ProfilePageSkeleton v-if="loading" />
+  <div class="min-h-screen">
+    <ProfileSK v-if="loading" />
     <Profile
       v-else
       :user="user"
@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+import ProfileSK from '~/components/profile/ProfileSK.vue'
 import { postService } from '~/services/post.service'
 import { userService } from '~/services/user.service'
 

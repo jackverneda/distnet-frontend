@@ -4,9 +4,9 @@
     <div class="h-48 bg-gray-100 relative">
       <div class="absolute -bottom-16 left-4">
         <UAvatar
+          size="3xl"
           :src="user.avatar"
           :alt="user.name"
-          size="xl"
           class="border-4 border-white"
         />
       </div>
@@ -19,7 +19,7 @@
           <h1 class="text-xl font-bold">
             {{ user.name }}
           </h1>
-          <p class="text-gray-600">@{{ user.username }}</p>
+          <p class="text-gray-500">@{{ user.username }}</p>
         </div>
         <UButton
           v-if="!isCurrentUser"
@@ -35,13 +35,15 @@
       </p>
 
       <!-- Stats -->
-      <div class="flex gap-4 mt-4 text-gray-600">
+      <div class="flex gap-4 mt-4 text-gray-500">
         <div class="flex items-center gap-1">
-          <span class="font-semibold text-gray-900">{{ user.following }}</span>
+          <span class="font-semibold">{{ user.following || 0 }}</span>
           <span>Following</span>
         </div>
         <div class="flex items-center gap-1">
-          <span class="font-semibold text-gray-900">{{ user.followers }}</span>
+          <span class="font-semibold text-gray-900">{{
+            user.followers || 0
+          }}</span>
           <span>Followers</span>
         </div>
         <div class="flex items-center gap-1">
@@ -56,6 +58,7 @@
       :items="tabs"
       class="mt-4"
       :ui="{ wrapper: 'border-b border-gray-200' }"
+      @change="changeTab"
     >
       <template #item="{ item }">
         <div class="flex items-center gap-1 relative py-4">
@@ -85,11 +88,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  isFollowing: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['follow', 'unfollow'])
-
-const isFollowing = ref(false)
+const emit = defineEmits(['follow', 'unfollow', 'changeTab'])
 
 const joinDate = computed(() => {
   return new Date(props.user.created_at).toLocaleDateString('en-US', {
@@ -100,12 +106,17 @@ const joinDate = computed(() => {
 
 const tabs = [
   { label: 'Posts', key: 'posts', count: props.posts.length },
-  { label: 'Replies', key: 'replies', count: 0 },
-  { label: 'Media', key: 'media', count: 0 },
+  { label: 'Followers', key: 'followers', count: 0 },
+  { label: 'Following', key: 'following', count: 0 },
 ]
 
 function toggleFollow() {
   isFollowing.value = !isFollowing.value
   emit(isFollowing.value ? 'follow' : 'unfollow')
+}
+
+function changeTab(index) {
+  console.log(index)
+  emit('changeTab', index)
 }
 </script>

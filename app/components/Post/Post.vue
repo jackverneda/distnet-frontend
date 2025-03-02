@@ -5,7 +5,7 @@
     <div>
       <div class="flex items-center gap-3">
         <NuxtLink
-          :to="`/profile/${tweet.user.name}`"
+          :to="`/profile/${tweet.user.user_id}`"
           class="block rounded-full focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
           <UAvatar :src="tweet.user.avatar" :alt="tweet.user.name" size="md" />

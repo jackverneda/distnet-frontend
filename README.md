@@ -52,6 +52,11 @@ yarn dev
 bun run dev
 ```
 
+```bash
+# Remove build cache
+rm -rf .nuxt .output
+```
+
 ## Production
 
 Build the application for production:
@@ -91,3 +96,18 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ## Renovate integration
 
 Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
+
+## Dockerfile
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+
+
+docker run -it -p 3000:3000 -v "$(pwd)":/app -w /app --name frontx distnet-front sh
+
+
+mkdir -p .nuxt node_modules/.cache && chmod -R 755 .nuxt node_modules/.cache
