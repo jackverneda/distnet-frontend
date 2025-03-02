@@ -1,8 +1,10 @@
-import { api } from './api.service'
+import { useApi } from './api.service'
 import { API_BASE_URL, API_ENDPOINTS } from '~/config/config'
 import type { IResponse } from '~/interfaces/IResponse'
 import type { User, AuthResponse, UserCore } from '~/types/user'
 
+export const userService = () => {
+const api = useApi()
 async function login(email: string, password: string): Promise<IResponse<AuthResponse>> {
   return api.post(API_BASE_URL + API_ENDPOINTS.LOGIN, { email, password })
 }
@@ -44,7 +46,7 @@ async function unfollowUser(userId: string): Promise<IResponse<void>> {
   return api.delete(`users/${userId}/follow`)
 }
 
-export const userService = {
+return  {
   login,
   register,
   getUser,
@@ -54,4 +56,5 @@ export const userService = {
   updateUser,
   followUser,
   unfollowUser
+}
 }

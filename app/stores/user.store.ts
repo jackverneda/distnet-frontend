@@ -3,6 +3,7 @@ import { userService } from '~/services/user.service'
 import type { User } from '~/types/user'
 
 export const useUserStore = defineStore('user', {
+
   state: () => ({
     currentUser: useState<User | null>('currentUser', () => null),
     loading: false,
@@ -38,7 +39,7 @@ export const useUserStore = defineStore('user', {
     async login(email: string, password: string) {
       try {
         this.loading = true
-        const response = await userService.login(email, password)
+        const response = await userService().login(email, password)
         if(response.data){
           this.currentUser = response.data.user
           useCookie('authToken').value = response.data.token
@@ -57,7 +58,7 @@ export const useUserStore = defineStore('user', {
     async fetchCurrentUser() {
       try {
         this.loading = true
-        const response = await userService.getUser(this.currentUser!.user_id)
+        const response = await userService().getUser(this.currentUser!.user_id)
         this.currentUser = response.data
         if (import.meta.client) {
           localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
@@ -73,7 +74,7 @@ export const useUserStore = defineStore('user', {
     async fetchUser(id: string) {
       try {
         this.loading = true
-        const response = await userService.getUser(id)
+        const response = await userService().getUser(id)
         this.users[id] = response.data
       } catch (error) {
         this.error = error.message || 'Failed to fetch user'
@@ -86,7 +87,7 @@ export const useUserStore = defineStore('user', {
     async updateProfile(userData: Partial<User>) {
       try {
         this.loading = true
-        const response = await userService.updateUser(userData)
+        const response = await userService().updateUser(userData)
         this.currentUser = response.data
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
       } catch (error) {
@@ -99,7 +100,7 @@ export const useUserStore = defineStore('user', {
 
     async followUser(userId: string) {
       try {
-        await userService.followUser(this.currentUser.user_id, userId)
+        await userService().followUser(this.currentUser.user_id, userId)
         this.fetchMyFollowing()
         this.fetchCurrentUser()
       } catch (error) {
@@ -111,7 +112,7 @@ export const useUserStore = defineStore('user', {
     async fetchMyFollowers() {
       try {
         this.loading = true
-        const response = await userService.getFollowers(this.currentUser!.user_id)
+        const response = await userService().getFollowers(this.currentUser!.user_id)
         response.data.forEach(user => {
           this.followers[user.user_id] = user
           this.users[user.user_id] = user
@@ -127,7 +128,7 @@ export const useUserStore = defineStore('user', {
     async fetchMyFollowing() {
       try {
         this.loading = true
-        const response = await userService.getFollowing(this.currentUser!.user_id)
+        const response = await userService().getFollowing(this.currentUser!.user_id)
         response.data.forEach(user => {
           this.following[user.user_id] = user
           this.users[user.user_id] = user
@@ -147,7 +148,7 @@ export const useUserStore = defineStore('user', {
       name: string
     }) {
       try {
-        await userService.register(userData)
+        await userService().register(userData)
         
       } catch (error) {
         this.error = error.message || 'Register failed'

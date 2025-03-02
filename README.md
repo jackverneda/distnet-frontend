@@ -109,5 +109,6 @@ CMD ["npm", "run", "dev"]
 
 docker run -it -p 3000:3000 -v "$(pwd)":/app -w /app --name frontx distnet-front sh
 
+docker run -it --network test_kademlia -p 3000:3000 -e API_BASE_URL="http://api.distnet.com." --dns 10.0.10.2 -w /app --name frontx distnet-front
 
 mkdir -p .nuxt node_modules/.cache && chmod -R 755 .nuxt node_modules/.cache

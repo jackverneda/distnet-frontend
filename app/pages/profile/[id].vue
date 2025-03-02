@@ -32,11 +32,11 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const userResponse = await userService.getUser(id)
+    const userResponse = await userService().getUser(id)
     user.value = userResponse.data
     console.log('User:', user.value)
 
-    const postsResponse = await postService.getPostsByUserId(id)
+    const postsResponse = await postService().getPostsByUserId(id)
     posts.value = postsResponse.data
     console.log('Posts:', posts.value)
   } catch (error) {

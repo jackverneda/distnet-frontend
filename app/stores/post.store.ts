@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { feedService } from '~/services/feed.service'
 import { postService } from '~/services/post.service'
 import type { Post } from '~/types/post'
 import type { KeyMap } from '~/types/utils'
@@ -31,7 +30,7 @@ export const usePostStore = defineStore('post', {
 
       try {
         this.loading = true
-        const newPost = await postService.createPost(content, currentUser)
+        const newPost = await postService().createPost(content, currentUser)
         this.posts.value[newPost.data.post_id] = newPost.data
         this.feed.unshift(newPost.data)
 
@@ -49,7 +48,7 @@ export const usePostStore = defineStore('post', {
         if (!this.hasMore) return
 
         this.loading = true
-        const newPosts = await postService.getPosts(this.currentPage)
+        const newPosts = await postService().getPosts(this.currentPage)
 
         if (newPosts.data.length === 0) {
           this.hasMore = false
@@ -68,7 +67,7 @@ export const usePostStore = defineStore('post', {
     async fetchPostsByUserId(userId: string) {
       try {
         this.loading = true
-        const newPosts = await postService.getPostsByUserId(userId)
+        const newPosts = await postService().getPostsByUserId(userId)
         newPosts.data.forEach(post => {
           this.posts[post.post_id] = post
         })
@@ -91,7 +90,7 @@ export const usePostStore = defineStore('post', {
 
       try {
         this.loading = true
-        const feed = await feedService.getFeed(currentUser)
+        const feed = await postService().getFeed(currentUser.user_id)
 
         if (feed.data.length === 0) {
           this.hasMore = false
@@ -110,10 +109,10 @@ export const usePostStore = defineStore('post', {
     // async toggleLike(post: Post) {
     //   try {
     //     if (post.isLiked) {
-    //       await postService.unlikePost(post.id)
+    //       await postService().unlikePost(post.id)
     //       post.likesCount--
     //     } else {
-    //       await postService.likePost(post.id)
+    //       await postService().likePost(post.id)
     //       post.likesCount++
     //     }
     //     post.isLiked = !post.isLiked
@@ -125,7 +124,7 @@ export const usePostStore = defineStore('post', {
 
     // async deletePost(postId: string) {
     //   try {
-    //     await postService.deletePost(postId)
+    //     await postService().deletePost(postId)
     //     this.posts = this.posts.filter(post => post.id !== postId)
     //   } catch (error) {
     //     this.error = error.message || 'Failed to delete post'

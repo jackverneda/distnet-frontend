@@ -15,6 +15,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.26",
     "@iconify-json/simple-icons": "^1.2.24",
+    "@nuxt/types": "^2.18.1",
     "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@17d88f7",
     "@pinia/nuxt": "^0.10.1",
     "@unovis/ts": "^1.5.0",

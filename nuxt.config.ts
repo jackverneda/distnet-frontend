@@ -10,6 +10,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true
   },
+
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
@@ -18,8 +19,18 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE_URL || 'http://localhost:81'
+      apiBase: '/api'
     }
+  },
+
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://api.distnet.com",
+        // target: "http://localhost:81",
+        changeOrigin: true,
+      },
+    },
   },
 
   routeRules: {

@@ -99,7 +99,7 @@ watch(
     console.log(searchQuery)
     if (query.trim()) {
       try {
-        const response = await userService.searchUsers(query.trim())
+        const response = await userService().searchUsers(query.trim())
         searchResults.value = response?.data || []
         console.log('Data', searchResults.value)
       } catch {

@@ -1,145 +1,78 @@
-async function requestOptions(method, body) {
-  const headers = new Headers()
+export const useApi = () => {
+  const baseURL = useRuntimeConfig().public.apiBase || '/api'
+  const authToken = useCookie('authToken')
 
-  const isFormData = body instanceof FormData
-
-  if (!isFormData) {
-    headers.append('Content-Type', 'application/json')
+  const fetchOptions = (method: string, body?: any) => {
+    const headers: HeadersInit = {}
+    const isFormData = body instanceof FormData
+    
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json'
+    }
+    
+    if (authToken.value) {
+      headers['Authorization'] = `Bearer ${authToken.value}`
+    }
+    
+    return {
+      method,
+      headers,
+      body: body ? (isFormData ? body : JSON.stringify(body)) : undefined
+    }
   }
 
-  const token = await getToken()
+  const handleError = (error: any) => {
+    const errorMessage = error.data?.message || 
+                        error.message || 
+                        'Error de conexión'
+    return {
+      status: 'error',
+      message: errorMessage,
+      ok: false,
+      data: null
+    }
+  }
 
-  if (token) {
-    headers.append('Authorization', `Bearer ${token}`)
+  const wrapper = async (path: string, options: any) => {
+    try {
+      const response = await $fetch<string>(path, {
+        baseURL,
+        ...options,
+        parseResponse: (txt) => txt,
+      })
+
+      const isJSON = options?.headers?.['Content-Type'] === 'application/json'
+      
+      return {
+        status: 'success',
+        data: isJSON ? JSON.parse(response) : response,
+        ok: true
+      }
+    } catch (error: any) {
+      return handleError(error)
+    }
   }
 
   return {
-    method: method,
-    headers: headers,
-    body: body ? (isFormData ? body : JSON.stringify(body)) : null
+    get: (url: string, params?: Record<string, any>) => 
+      wrapper(url, {
+        ...fetchOptions('GET'),
+        query: params
+      }),
+
+    post: (url: string, body?: any, params?: Record<string, any>) =>
+      wrapper(url, {
+        ...fetchOptions('POST', body),
+        query: params
+      }),
+
+    put: (url: string, body?: any, params?: Record<string, any>) =>
+      wrapper(url, {
+        ...fetchOptions('PUT', body),
+        query: params
+      }),
+
+    delete: (url: string) =>
+      wrapper(url, fetchOptions('DELETE'))
   }
-}
-
-async function handleResponse(response) {
-  try {
-    if (!response.ok) {
-      const contentType = response.headers.get('Content-Type')
-
-      if (contentType && contentType.includes('application/json')) {
-        try {
-          const errorData = await response.json()
-          throw new Error(errorData.message || errorData || 'Algo salió mal')
-        } catch {
-          // Si la respuesta no es un JSON válido, intentamos manejarla como texto plano
-          const errorText = await response.text()
-          const errorMessage = extractErrorMessage(errorText)
-          throw new Error(errorMessage || 'Algo salió mal')
-        }
-      } else {
-        const errorText = await response.text()
-        const errorMessage = extractErrorMessage(errorText)
-        throw new Error(errorMessage || 'Algo salió mal')
-      }
-    }
-
-    const contentType = response.headers.get('Content-Type')
-    if (contentType?.includes('application/json')) {
-      const responseData = await response.json()
-      return {
-        status: 'success',
-        data: responseData,
-        ok: true
-      }
-    } else if (contentType?.includes('text') || contentType === null) {
-      const responseData = await response.text()
-      return {
-        status: 'success',
-        data: responseData,
-        ok: true
-      }
-    } else {
-      throw new Error('Tipo de contenido no compatible')
-    }
-  } catch (error) {
-    return {
-      message: error.message,
-      status: 'error',
-      ok: false
-    }
-  }
-}
-
-function extractErrorMessage(errorText) {
-  const match = errorText.match(/System\.Exception:\s*(.*?)(\n|$)/)
-  return match ? match[1] : null
-}
-
-async function get(url, params = {}) {
-  try {
-    const queryParams = params ? new URLSearchParams(params).toString() : ''
-    const requestUrl = queryParams ? `${url}?${queryParams}` : url
-
-    const requestOption = await requestOptions('GET', null)
-
-    const response = await fetch(requestUrl, requestOption)
-    return handleResponse(response)
-  } catch {
-    return {
-      message: 'Error con la conexion a internet',
-      status: 'error',
-      ok: false
-    }
-  }
-}
-
-async function post(url, body, params = null) {
-  try {
-    const queryParams = params ? new URLSearchParams(params).toString() : ''
-    const requestUrl = queryParams ? `${url}?${queryParams}` : url
-
-    const requestOption = await requestOptions('POST', body)
-    const response = await fetch(requestUrl, requestOption)
-    return handleResponse(response)
-  } catch (error) {
-    return {
-      message: error.message,
-      status: 'error',
-      ok: false
-    }
-  }
-}
-
-async function put(url, body, params = null) {
-  try {
-    const queryParams = params ? new URLSearchParams(params).toString() : ''
-    const requestUrl = queryParams ? `${url}?${queryParams}` : url
-
-    const requestOption = await requestOptions('PUT', body)
-    const response = await fetch(requestUrl, requestOption)
-    return handleResponse(response)
-  } catch {
-    return {
-      message: 'Error con la conexion a internet',
-      status: 'error',
-      ok: false
-    }
-  }
-}
-
-async function del(url) {
-  const requestOption = await requestOptions('DELETE', null)
-  const response = await fetch(url, requestOption)
-  return handleResponse(response)
-}
-
-async function getToken() {
-  const authToken = useCookie('authToken').value
-  return authToken ?? false
-}
-
-export const api = {
-  get,
-  post,
-  put,
-  delete: del
 }

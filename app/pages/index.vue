@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { user } from '#build/ui-pro'
 import PostSK from '~/components/Post/PostSK.vue'
-import { feedService } from '~/services/feed.service'
+import { postService } from '~/services/post.service'
 
 const postsStore = usePostStore()
 const userStore = useUserStore()
@@ -19,7 +19,7 @@ async function refresh() {
   try {
     await userStore.fetchCurrentUser()
 
-    const feedResponse = await feedService.getFeed(currentUser.value.user_id)
+    const feedResponse = await postService().getFeed(currentUser.value.user_id)
     feed.value = feedResponse.data
     console.log('Posts:', feed.value)
   } catch (error) {

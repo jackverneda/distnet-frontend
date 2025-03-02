@@ -1,28 +1,19 @@
 FROM node:20-alpine
 
-# Crear usuario con mismo UID/GID que tu host
-ARG USER_ID=1001
-ARG GROUP_ID=1001
-
-# RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN addgroup -g ${GROUP_ID} appgroup && \
-    adduser -u ${USER_ID} -G appgroup -D appuser
-
+# Usar el usuario/grupo existente 'node' (UID/GID 1000)
 WORKDIR /app
 
-# Configurar cache de npm en directorio con permisos
-RUN chown -R appuser:appgroup /app && \
-    npm config set cache /tmp/.npm --global
+# Copiar archivos como root temporalmente
+COPY package*.json ./
 
-USER appuser
+# Instalar dependencias y cambiar owner
+RUN npm install && chown -R node:node .
 
-# Copiar solo lo necesario
-COPY --chown=appuser:appgroup package*.json ./
+# Cambiar a usuario no-root
+USER node
 
-# Instalar dependencias
-RUN npm install
-
-# Copiar el resto
-COPY --chown=appuser:appgroup . .
+COPY . .
 
 EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
