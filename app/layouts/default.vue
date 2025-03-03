@@ -22,42 +22,42 @@ const links = computed(() => [
       icon: 'i-lucide-house',
       to: '/',
     },
-    {
-      label: 'Explore',
-      icon: 'i-lucide-search',
-      to: '/explore',
-    },
-    {
-      label: 'Customers',
-      icon: 'i-lucide-users',
-      to: '/customers',
-    },
+    // {
+    //   label: 'Explore',
+    //   icon: 'i-lucide-search',
+    //   to: '/explore',
+    // },
+    // {
+    //   label: 'Customers',
+    //   icon: 'i-lucide-users',
+    //   to: '/customers',
+    // },
     {
       label: 'Profile',
       icon: 'i-lucide-user',
       to: `/profile/${currentUser.value?.user_id}`,
     },
-    {
-      label: 'Settings',
-      to: '/settings',
-      icon: 'i-lucide-settings',
-      defaultOpen: true,
-      children: [
-        {
-          label: 'General',
-          to: '/settings',
-          exact: true,
-        },
-        {
-          label: 'Members',
-          to: '/settings/members',
-        },
-        {
-          label: 'Security',
-          to: '/settings/security',
-        },
-      ],
-    },
+    // {
+    //   label: 'Settings',
+    //   to: '/settings',
+    //   icon: 'i-lucide-settings',
+    //   defaultOpen: true,
+    //   children: [
+    //     {
+    //       label: 'General',
+    //       to: '/settings',
+    //       exact: true,
+    //     },
+    //     {
+    //       label: 'Members',
+    //       to: '/settings/members',
+    //     },
+    //     {
+    //       label: 'Security',
+    //       to: '/settings/security',
+    //     },
+    //   ],
+    // },
   ],
 ])
 

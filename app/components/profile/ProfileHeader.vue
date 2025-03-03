@@ -54,7 +54,7 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <UTabs
+    <!-- <UTabs
       :items="tabs"
       class="mt-4"
       :ui="{ wrapper: 'border-b border-gray-200' }"
@@ -68,7 +68,7 @@
           }}</span>
         </div>
       </template>
-    </UTabs>
+    </UTabs> -->
   </div>
 </template>
 

@@ -158,6 +158,8 @@ export const useUserStore = defineStore('user', {
 
     logout() {
       this.currentUser = null
+      this.followers = {}
+      this.following = {}
       useCookie('authToken').value = null
       localStorage.removeItem('currentUser')
     }
