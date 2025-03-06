@@ -53,4 +53,12 @@ function handleLike(tweet) {
 function handleRetweet(tweet) {
   // Handle retweet logic
 }
+
+definePageMeta({
+  middleware: ['auth'],
+  auth: {
+    requiresAuth: true,
+    navigateTo: '/login',
+  },
+})
 </script>

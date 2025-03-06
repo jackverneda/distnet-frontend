@@ -33,15 +33,24 @@ const newTweet = ref('')
 
 function postTweet() {
   console.log('Posting tweet:', newTweet.value)
-  postsStore.createPost(newTweet.value.trim())
-  newTweet.value = ''
-  refresh()
+  postsStore.createPost(newTweet.value.trim()).finally(() => {
+    newTweet.value = ''
+    refresh()
+  })
 }
 
 function toggleRetweet(tweet) {
   tweet.retweeted = !tweet.retweeted
   tweet.retweets += tweet.retweeted ? 1 : -1
 }
+
+definePageMeta({
+  middleware: ['auth'],
+  auth: {
+    requiresAuth: true,
+    navigateTo: '/login',
+  },
+})
 </script>
 
 <template>
@@ -83,16 +92,17 @@ function toggleRetweet(tweet) {
       </div>
     </div>
 
-    <div class="mt-8" v-if="loading">
+    <div class="mt-8 divide-y divide-(--ui-border)" v-if="loading">
       <PostSK v-for="i in 3" :key="i" />
     </div>
     <!-- Tweet Feed -->
-    <Post
-      v-else
-      v-for="tweet in feed"
-      :key="tweet.id"
-      :tweet="tweet"
-      @retweet="toggleRetweet"
-    />
+    <div class="mt-8 divide-y divide-(--ui-border) overflow-y-scroll" v-else>
+      <Post
+        v-for="tweet in feed"
+        :key="tweet.id"
+        :tweet="tweet"
+        @retweet="toggleRetweet"
+      />
+    </div>
   </div>
 </template>

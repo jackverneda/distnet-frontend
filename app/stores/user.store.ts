@@ -28,12 +28,12 @@ export const useUserStore = defineStore('user', {
         const user = localStorage.getItem('currentUser');
         this.currentUser = user ? JSON.parse(user) : null;
       }
+
       if(this.currentUser){
         this.fetchCurrentUser()
         this.fetchMyFollowers()
         this.fetchMyFollowing()
       }
-
     },
 
     async login(email: string, password: string) {

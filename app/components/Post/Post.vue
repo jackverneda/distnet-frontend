@@ -2,7 +2,8 @@
   <div
     class="hover:bg-gray-50 transition-colors cursor-pointer flex flex-col p-4"
   >
-    <div>
+    <div class="flex flex-col">
+      <!-- <span class="text-gray-500">@{{ tweet.user.username }} reposted</span> -->
       <div class="flex items-center gap-3">
         <NuxtLink
           :to="`/profile/${tweet.user.user_id}`"
@@ -25,13 +26,13 @@
         <div
           class="flex items-center gap-1 text-gray-500 hover:text-green-500 self-end"
         >
-          <UButton
+          <!-- <UButton
             icon="i-heroicons-arrow-path"
             variant="ghost"
             size="sm"
             :color="tweet.retweeted ? 'green' : 'gray'"
             @click="$emit('retweet', tweet)"
-          />
+          /> -->
         </div>
       </div>
     </div>

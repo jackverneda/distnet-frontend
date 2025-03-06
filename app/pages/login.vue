@@ -83,10 +83,10 @@ async function handleLogin() {
 
 definePageMeta({
   layout: 'auth',
-  // middleware: ['auth'],
-  // auth: {
-  //   unauthenticatedOnly: true,
-  //   navigateAuthenticatedTo: '/',
-  // },
+  middleware: ['auth'],
+  auth: {
+    unauthenticatedOnly: true,
+    navigateTo: '/',
+  },
 })
 </script>

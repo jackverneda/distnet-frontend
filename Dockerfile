@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+RUN apk add iproute2 iputils iptables
+
 # Usar el usuario/grupo existente 'node' (UID/GID 1000)
 WORKDIR /app
 
@@ -10,10 +12,12 @@ COPY package*.json ./
 RUN npm install && chown -R node:node .
 
 # Cambiar a usuario no-root
-USER node
+# USER node
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+RUN chmod +x /app/client.sh
+
+CMD ["sh", "-c", "/app/client.sh"]
